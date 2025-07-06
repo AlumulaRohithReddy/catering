@@ -2,7 +2,9 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // Use the correct API URL format and ensure it's properly defined
-const API_URL = 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL
+  ? `${process.env.REACT_APP_API_URL}/api`
+  : 'http://localhost:5000/api';
 
 // Add request throttling to prevent excessive API calls
 let lastMenuFetchTime = 0;
