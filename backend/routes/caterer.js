@@ -653,7 +653,7 @@ router.post('/logo', authMiddleware, upload.single('image'), async (req, res) =>
       return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
     // Upload to Cloudinary
-    const result = await uploadToCloudinary(req.file.path, 'catering-app/caterer-logos');
+    const result = await uploadToCloudinary(req.file.buffer, 'catering-app/caterer-logos');
     // Update caterer profile
     const caterer = await Caterer.findOneAndUpdate(
       { catererID: req.caterer.catererID },
