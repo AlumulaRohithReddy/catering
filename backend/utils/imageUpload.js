@@ -13,16 +13,8 @@ cloudinary.config({
   api_secret:CLOUDINARY_API_SECRET
 });
 
-// Configure multer for temporary storage
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, path.join(__dirname, '../uploads/'));
-  },
-  filename: function(req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Configure multer for memory storage
+const storage = multer.memoryStorage();
 
 // File filter (only accept images)
 const fileFilter = (req, file, cb) => {
@@ -43,41 +35,18 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-// Function to handle file upload to Cloudinary
-const uploadToCloudinary = async (filePath, folder = 'catering-app') => {
-  try {
-    // Check if file exists
-    if (!fs.existsSync(filePath)) {
-      throw new Error(`File not found: ${filePath}`);
-    }
-    
-    // Upload the file to Cloudinary
-    const result = await cloudinary.uploader.upload(filePath, {
-      folder: folder,
-      use_filename: true,
-      unique_filename: true,
-      overwrite: true
-    });
-    
-    // Delete the temporary file
-    fs.unlink(filePath, (err) => {
-      if (err) console.error('Error deleting temporary file:', err);
-    });
-    
-    return {
-      url: result.secure_url,
-      public_id: result.public_id
-    };
-  } catch (error) {
-    // Delete the temporary file in case of error
-    if (fs.existsSync(filePath)) {
-      fs.unlink(filePath, (err) => {
-        if (err) console.error('Error deleting temporary file after failed upload:', err);
-      });
-    }
-    
-    throw error;
-  }
+// Function to handle file upload to Cloudinary from buffer
+const uploadToCloudinary = (buffer, folder = 'catering-app') => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder, use_filename: true, unique_filename: true, overwrite: true },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve({ url: result.secure_url, public_id: result.public_id });
+      }
+    );
+    stream.end(buffer);
+  });
 };
 
 // Function to delete an image from Cloudinary
