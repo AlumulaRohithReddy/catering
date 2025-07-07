@@ -47,21 +47,32 @@ const CatererLogin = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #fff0f6 0%, #ffe0ef 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px rgba(255,92,141,0.10)', padding: 36, maxWidth: 370, width: '100%' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #fff0f6 0%, #ffe0ef 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+      <div
+        className="login-container"
+        style={{
+          background: '#fff',
+          borderRadius: 18,
+          boxShadow: '0 4px 24px rgba(255,92,141,0.10)',
+          padding: 36,
+          maxWidth: 370,
+          width: '100%',
+          boxSizing: 'border-box'
+        }}
+      >
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
           <button
             onClick={() => setTab('login')}
             style={{
+              flex: 1,
               background: tab === 'login' ? '#ff5c8d' : 'transparent',
               color: tab === 'login' ? '#fff' : '#ff5c8d',
               border: 'none',
               borderRadius: '18px 0 0 18px',
-              padding: '10px 28px',
+              padding: '10px 0',
               fontWeight: 700,
               fontSize: 18,
-              cursor: 'pointer',
-              transition: 'background 0.2s'
+              cursor: 'pointer'
             }}
           >
             Login
@@ -69,15 +80,15 @@ const CatererLogin = () => {
           <button
             onClick={() => setTab('signup')}
             style={{
+              flex: 1,
               background: tab === 'signup' ? '#ff5c8d' : 'transparent',
               color: tab === 'signup' ? '#fff' : '#ff5c8d',
               border: 'none',
               borderRadius: '0 18px 18px 0',
-              padding: '10px 28px',
+              padding: '10px 0',
               fontWeight: 700,
               fontSize: 18,
-              cursor: 'pointer',
-              transition: 'background 0.2s'
+              cursor: 'pointer'
             }}
           >
             Sign Up
@@ -85,20 +96,20 @@ const CatererLogin = () => {
         </div>
         <form onSubmit={handleSubmit}>
           {tab === 'signup' && (
-            <label style={{ color: '#ff5c8d', fontWeight: 600, fontSize: 15, display: 'block', marginBottom: 8 }}>
-              Business Name
+            <label style={{ display: 'block', marginBottom: 16 }}>
+              <span style={{ color: '#ff5c8d', fontWeight: 600, fontSize: 15 }}>Business Name</span>
               <input
                 type="text"
                 name="businessName"
                 value={form.businessName}
                 onChange={handleChange}
                 required
-                style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #ffd6e6', marginTop: 4, marginBottom: 16, fontSize: 15 }}
+                style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #ffd6e6', marginTop: 4, fontSize: 15 }}
               />
             </label>
           )}
-          <label style={{ color: '#ff5c8d', fontWeight: 600, fontSize: 15, display: 'block', marginBottom: 8 }}>
-            Email
+          <label style={{ display: 'block', marginBottom: 16 }}>
+            <span style={{ color: '#ff5c8d', fontWeight: 600, fontSize: 15 }}>Email</span>
             <input
               type="email"
               name="email"
@@ -106,11 +117,11 @@ const CatererLogin = () => {
               onChange={handleChange}
               required
               placeholder="Enter your email"
-              style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #ffd6e6', marginTop: 4, marginBottom: 16, fontSize: 15 }}
+              style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #ffd6e6', marginTop: 4, fontSize: 15 }}
             />
           </label>
-          <label style={{ color: '#ff5c8d', fontWeight: 600, fontSize: 15, display: 'block', marginBottom: 8 }}>
-            Password
+          <label style={{ display: 'block', marginBottom: 16 }}>
+            <span style={{ color: '#ff5c8d', fontWeight: 600, fontSize: 15 }}>Password</span>
             <input
               type="password"
               id="password"
@@ -118,21 +129,21 @@ const CatererLogin = () => {
               value={form.password}
               onChange={handleChange}
               required
-              style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #ffd6e6', marginTop: 4, marginBottom: 16, fontSize: 15 }}
               placeholder="Enter your password"
+              style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #ffd6e6', marginTop: 4, fontSize: 15 }}
             />
           </label>
           {tab === 'signup' && (
-            <label style={{ color: '#ff5c8d', fontWeight: 600, fontSize: 15, display: 'block', marginBottom: 8 }}>
-              Confirm Password
+            <label style={{ display: 'block', marginBottom: 16 }}>
+              <span style={{ color: '#ff5c8d', fontWeight: 600, fontSize: 15 }}>Confirm Password</span>
               <input
                 type="password"
                 name="confirmPassword"
                 value={form.confirmPassword}
                 onChange={handleChange}
                 required
-                style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #ffd6e6', marginTop: 4, marginBottom: 16, fontSize: 15 }}
                 placeholder="Re-enter your password"
+                style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #ffd6e6', marginTop: 4, fontSize: 15 }}
               />
             </label>
           )}
@@ -151,8 +162,7 @@ const CatererLogin = () => {
               fontSize: 17,
               marginTop: 8,
               boxShadow: '0 2px 8px rgba(255,92,141,0.10)',
-              cursor: 'pointer',
-              transition: 'background 0.18s'
+              cursor: 'pointer'
             }}
           >
             {loading ? (tab === 'login' ? 'Logging in...' : 'Signing up...') : (tab === 'login' ? 'Login' : 'Sign Up')}
@@ -170,10 +180,17 @@ const CatererLogin = () => {
         </form>
       </div>
       <style>{`
-        @media (max-width: 500px) {
-          div[style*='max-width: 370px'] {
-            max-width: 340px !important;
-            padding: 8px !important;
+        @media (max-width: 480px) {
+          .login-container {
+            padding: 20px !important;
+            max-width: 100% !important;
+            margin: 0 10px;
+          }
+          input {
+            font-size: 14px !important;
+          }
+          button {
+            font-size: 16px !important;
           }
         }
       `}</style>
@@ -181,4 +198,4 @@ const CatererLogin = () => {
   );
 };
 
-export default CatererLogin; 
+export default CatererLogin;
