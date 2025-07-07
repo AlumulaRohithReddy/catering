@@ -61,9 +61,9 @@ exports.createMenuItem = async (req, res) => {
     
     // If image was uploaded
     if (req.file) {
-      console.log('Processing image upload:', req.file.path);
+      console.log('Processing image upload (buffer):', req.file.originalname);
       try {
-        const result = await uploadToCloudinary(req.file.path, 'catering-app/menu-items');
+        const result = await uploadToCloudinary(req.file.buffer, 'catering-app/menu-items');
         console.log('Image uploaded successfully:', result.url);
         menuItemData.imageUrl = result.url;
         menuItemData.imagePublicId = result.public_id;
@@ -181,9 +181,8 @@ exports.updateMenuItem = async (req, res) => {
       if (menuItem.imagePublicId) {
         await deleteFromCloudinary(menuItem.imagePublicId);
       }
-      
       // Upload new image
-      const result = await uploadToCloudinary(req.file.path, 'catering-app/menu-items');
+      const result = await uploadToCloudinary(req.file.buffer, 'catering-app/menu-items');
       menuItemData.imageUrl = result.url;
       menuItemData.imagePublicId = result.public_id;
     }
