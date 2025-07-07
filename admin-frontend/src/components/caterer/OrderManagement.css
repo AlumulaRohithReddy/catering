@@ -76,10 +76,6 @@
   text-align: left;
   font-size: 14px;
   border: 1px solid #fce7f3;
-  word-break: break-word;
-  white-space: normal;
-  max-width: 140px;
-  overflow-wrap: break-word;
 }
 
 .order-table tbody tr:hover {
@@ -123,15 +119,6 @@
     width: 100%;
     table-layout: fixed;
   }
-  .order-table th,
-  .order-table td {
-    max-width: 120px;
-    font-size: 13px;
-    padding: 8px 8px;
-    word-break: break-word;
-    white-space: normal;
-    overflow-wrap: break-word;
-  }
 }
 
 @media (max-width: 900px) {
@@ -157,15 +144,11 @@
   }
   .order-table th,
   .order-table td {
-    max-width: 100px;
-    font-size: 12px;
-    padding: 6px 4px;
-    word-break: break-word;
-    white-space: normal;
-    overflow-wrap: break-word;
+    padding: 8px 8px;
+    font-size: 13px;
   }
   .order-table {
-    font-size: 12px;
+    font-size: 13px;
     min-width: 600px;
     overflow-x: auto;
     display: block;
