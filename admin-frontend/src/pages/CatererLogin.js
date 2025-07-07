@@ -223,20 +223,20 @@ const CatererLogin = () => {
         }
         @media (max-width: 500px) {
           .caterer-login-card {
-            max-width: 98vw;
-            padding: 12px;
+            max-width: 95vw;
+            min-width: 0;
+            margin: 0 2vw;
+            padding: 10px;
             border-radius: 10px;
+            box-sizing: border-box;
           }
-          .caterer-login-tabs button {
-            font-size: 15px;
-            padding: 8px 12px;
-          }
-          .caterer-login-label {
-            font-size: 13px;
+          .caterer-login-form {
+            box-sizing: border-box;
           }
           .caterer-login-input {
             font-size: 13px;
-            padding: 8px;
+            padding: 10px 8px;
+            box-sizing: border-box;
           }
           .caterer-login-btn {
             font-size: 15px;
