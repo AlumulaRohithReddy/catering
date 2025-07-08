@@ -196,7 +196,14 @@ function OrderFlowInner() {
     const pageKey = `${steps[step]}-${step}`;
     switch (steps[step]) {
       case 'guestCount':
-        return <GuestCountPage key={pageKey} guestCount={guestCount} setGuestCount={handleGuestCountChange} goNext={goNext} />;
+         return 
+          <GuestCountPage
+            key={pageKey}
+            guestCount={guestCount}
+            setGuestCount={handleGuestCountChange}
+            goNext={goNext}
+            catererInfo={catererInfo}
+          />;
       case 'customerDetails':
         return <CustomerDetailsForm key={pageKey} initialDetails={customerDetails} onSubmit={handleCustomerDetailsSubmit} goBack={handleCustomerDetailsBack} />;
       case 'unifiedMenu':
