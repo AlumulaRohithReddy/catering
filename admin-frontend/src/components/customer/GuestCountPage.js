@@ -23,9 +23,8 @@ export default React.memo(function GuestCountPage({ guestCount, setGuestCount, g
   return (
     <div className="orderflow-container">
       <div className="orderflow-header">Catering</div>
-      <div className="orderflow-image">
-      <img
-          src={catererInfo?.businessLogo} || {cateringLogo} 
+      <div className="orderflow-image"><img
+          src={catererInfo?.businessLogo || '../../assets/orderflow/Catering.png'}
           alt="Catering Logo"
         /></div>
       <div className="orderflow-title">How many guests?</div>
