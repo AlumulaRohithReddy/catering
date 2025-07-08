@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import cateringLogo from '../../assets/orderflow/Catering.png';
-export default React.memo(function GuestCountPage({ guestCount, setGuestCount, goNext }) {
+export default React.memo(function GuestCountPage({ guestCount, setGuestCount, goNext, catererInfo }) {
   const [localGuestCount, setLocalGuestCount] = useState(guestCount);
   const [error, setError] = useState('');
 
@@ -24,7 +24,7 @@ export default React.memo(function GuestCountPage({ guestCount, setGuestCount, g
     <div className="orderflow-container">
       <div className="orderflow-header">Catering</div>
       <div className="orderflow-image"><img
-          src={catererInfo?.businessLogo || '../../assets/orderflow/Catering.png'}
+          src={catererInfo?.businessLogo || cateringLogo}
           alt="Catering Logo"
         /></div>
       <div className="orderflow-title">How many guests?</div>
