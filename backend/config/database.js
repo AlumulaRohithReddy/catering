@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 const connectDB = async () => {
   try {
     // Use the provided MongoDB URI
-    const mongoURI = process.env.MONGO_URI || 'mongodb+srv://cat:cat123@cluster0.zfeadbp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+    const mongoURI = process.env.MONGO_URI;
+    if (!mongoURI) {
+      throw new Error('MONGO_URI environment variable is not set!');
+    }
     
     const conn = await mongoose.connect(mongoURI, {
       useNewUrlParser: true,
