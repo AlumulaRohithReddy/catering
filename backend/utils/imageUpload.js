@@ -4,13 +4,13 @@ const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 
 // Configure Cloudinary
-const CLOUDINARY_CLOUD_NAME="abhilashbanda"
-const CLOUDINARY_API_KEY=935841832968461
-const CLOUDINARY_API_SECRET="xD1w80RNmj3TG3sahrdgQB_Hz10"
+const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 cloudinary.config({
-  cloud_name:CLOUDINARY_CLOUD_NAME,
-  api_key:CLOUDINARY_API_KEY,
-  api_secret:CLOUDINARY_API_SECRET
+  cloud_name: CLOUDINARY_CLOUD_NAME,
+  api_key: CLOUDINARY_API_KEY,
+  api_secret: CLOUDINARY_API_SECRET
 });
 
 // Configure multer for memory storage
