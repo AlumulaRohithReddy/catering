@@ -202,7 +202,6 @@ function OrderFlowInner() {
             guestCount={guestCount}
             setGuestCount={handleGuestCountChange}
             goNext={goNext}
-            catererInfo={catererInfo}
           />;
       case 'customerDetails':
         return <CustomerDetailsForm key={pageKey} initialDetails={customerDetails} onSubmit={handleCustomerDetailsSubmit} goBack={handleCustomerDetailsBack} />;
