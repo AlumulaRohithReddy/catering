@@ -5,7 +5,7 @@ import CustomDropdown from './CustomDropdown';
 
 export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSelected, goBack, miscCost = 0 }) {
   const { catererID: contextCatererID, setCatererID } = useCustomerOrderContext();
-  
+
   // Persisted state for dropdowns
   const [menuType, setMenuType] = useState(() => localStorage.getItem('orderflow_menuType') || '');
   useEffect(() => localStorage.setItem('orderflow_menuType', menuType), [menuType]);
@@ -22,7 +22,7 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
   const [quantities, setQuantities] = useState({});
   const [showCart, setShowCart] = useState(false);
   const [activeTab, setActiveTab] = useState('category'); // 'category' or 'popular'
-  
+
   // State for guest count input to prevent cursor jumping
   const [localGuestCount, setLocalGuestCount] = useState(guestCount);
 
@@ -86,7 +86,7 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
     const id = Date.now();
     const notification = { id, message, type };
     setNotifications(prev => [...prev, notification]);
-    
+
     // Auto-remove notification after 5 seconds
     setTimeout(() => {
       setNotifications(prev => prev.filter(n => n.id !== id));
@@ -97,28 +97,28 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
   const checkAvailabilityChanges = (newItems, oldItems) => {
     const newAvailable = newItems.filter(item => item.isAvailable === true);
     const oldAvailable = oldItems.filter(item => item.isAvailable === true);
-    
+
     // Check for newly available items
-    const newlyAvailable = newAvailable.filter(newItem => 
+    const newlyAvailable = newAvailable.filter(newItem =>
       !oldAvailable.find(oldItem => oldItem._id === newItem._id)
     );
-    
+
     // Check for newly unavailable items
-    const newlyUnavailable = oldAvailable.filter(oldItem => 
+    const newlyUnavailable = oldAvailable.filter(oldItem =>
       !newAvailable.find(newItem => newItem._id === oldItem._id)
     );
-    
+
     if (newlyAvailable.length > 0) {
       const itemNames = newlyAvailable.map(item => item.name).join(', ');
       showNotification(`🎉 ${itemNames} is now available!`, 'success');
-      
+
       // Add newly available items to the set for highlighting
       setNewlyAvailableItems(prev => {
         const newSet = new Set(prev);
         newlyAvailable.forEach(item => newSet.add(item._id));
         return newSet;
       });
-      
+
       // Remove highlight after 10 seconds
       setTimeout(() => {
         setNewlyAvailableItems(prev => {
@@ -128,7 +128,7 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
         });
       }, 10000);
     }
-    
+
     if (newlyUnavailable.length > 0) {
       const itemNames = newlyUnavailable.map(item => item.name).join(', ');
       showNotification(`⚠️ ${itemNames} is no longer available.`, 'warning');
@@ -152,11 +152,11 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
   // Function to fetch menu items by category
   const fetchMenuItemsByCategory = async (categoryName) => {
     if (!categoryName) return;
-    
+
     setLoading(true);
     setError('');
     const token = localStorage.getItem('token');
-    
+
     try {
       const res = await fetch(`/api/menu/category/${categoryName}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -181,18 +181,18 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
   const refreshAllData = async () => {
     lastRefreshTimeRef.current = Date.now();
     setLastUpdated(new Date());
-    
+
     // Store previous menu items for comparison
     const previousItems = [...menuItems];
-    
+
     // Refresh popular items
     await fetchPopularItems();
-    
+
     // Refresh current category if active
     if (activeTab === 'category' && category) {
       await fetchMenuItemsByCategory(category);
     }
-    
+
     // Check for availability changes after a short delay to ensure state is updated
     setTimeout(() => {
       checkAvailabilityChanges(menuItems, previousItems);
@@ -256,7 +256,7 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
         filteredMenu = filteredMenu.filter(item => item.isAvailable === true);
         setMenuItems(filteredMenu);
       };
-      
+
       filterAndDisplay(popularItems);
       return;
     }
@@ -299,24 +299,24 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
     const unavailableIds = Object.values(allSelectedItems)
       .filter(item => item.isAvailable !== true)
       .map(item => item._id);
-    
+
     if (unavailableIds.length > 0) {
       const removedItems = Object.values(allSelectedItems)
         .filter(item => unavailableIds.includes(item._id))
         .map(item => item.name);
-      
+
       setAllSelectedItems(prev => {
         const updated = { ...prev };
         unavailableIds.forEach(id => delete updated[id]);
         return updated;
       });
-      
+
       // Show a more informative notification
       const itemNames = removedItems.join(', ');
-      const message = removedItems.length === 1 
+      const message = removedItems.length === 1
         ? `"${itemNames}" is no longer available and has been removed from your cart.`
         : `The following items are no longer available and have been removed from your cart: ${itemNames}`;
-      
+
       showNotification(message, 'warning');
     }
   }, [menuItems, allSelectedItems]);
@@ -327,10 +327,10 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
   };
 
   const handleQuantityChange = (id, delta) => {
-    // Always increment/decrement by 1 (unit-wise)
     const increment = 1;
     const item = menuItems.find(i => i._id === id);
     if (!item) return;
+
     if (item.isAvailable !== true) {
       alert('This item is not available and cannot be added to your cart.');
       return;
@@ -339,14 +339,17 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
     setQuantities(q => {
       const currentQuantity = q[id] || 0;
       let newQuantity = currentQuantity + (delta * increment);
-      const finalQuantity = Math.max(0, newQuantity);
+
+      // Clamp between 0 and 1
+      newQuantity = Math.max(0, Math.min(1, newQuantity));
+
       // Update master list of all selected items
       setAllSelectedItems(prev => {
         const updated = { ...prev };
-        if (finalQuantity > 0) {
+        if (newQuantity > 0) {
           updated[id] = {
             ...item,
-            quantity: finalQuantity,
+            quantity: newQuantity,
             category: category, // Store category with the item
           };
         } else {
@@ -354,10 +357,10 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
         }
         return updated;
       });
-      return { ...q, [id]: finalQuantity };
+
+      return { ...q, [id]: newQuantity };
     });
   };
-
   const getSelectedItems = () => {
     // Only include available items in calculations
     return Object.values(allSelectedItems).filter(item => item.isAvailable === true);
@@ -397,7 +400,7 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
       setError('Please add at least one item to your order.');
       return;
     }
-    
+
     // Pass selected items to parent component
     onItemsSelected(selectedItems);
   };
@@ -422,7 +425,7 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
         {notifications.map(notification => (
           <div key={notification.id} className={`notification notification-${notification.type}`}>
             {notification.message}
-            <button 
+            <button
               onClick={() => setNotifications(prev => prev.filter(n => n.id !== notification.id))}
               className="notification-close"
             >
@@ -522,17 +525,17 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
           ) : (
             <div className="menu-items-grid">
               {filteredPopularItems.map(item => (
-                <div 
+                <div
                   className={`menu-item-card ${newlyAvailableItems.has(item._id) ? 'newly-available' : ''}`}
                   key={item._id}
                 >
                   {newlyAvailableItems.has(item._id) && (
                     <div className="newly-available-badge">🆕 Just Available!</div>
                   )}
-                  <img 
-                    className="menu-item-image" 
-                    src={item.imageUrl || '/orderflow/placeholder.jpg'} 
-                    alt={item.name} 
+                  <img
+                    className="menu-item-image"
+                    src={item.imageUrl || '/orderflow/placeholder.jpg'}
+                    alt={item.name}
                   />
                   <div className="menu-item-content">
                     <h3 className="menu-item-title">{item.name}</h3>
@@ -540,16 +543,16 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
                     <div className="menu-item-price">{formatCurrency(item.price)}</div>
                     <div className="menu-item-actions">
                       <div className="quantity-control">
-                        <button 
-                          onClick={() => handleQuantityChange(item._id, -1)} 
+                        <button
+                          onClick={() => handleQuantityChange(item._id, -1)}
                           className="quantity-btn"
                           disabled={!quantities[item._id]}
                         >
                           -
                         </button>
                         <span className="quantity-display">{quantities[item._id] || 0}</span>
-                        <button 
-                          onClick={() => handleQuantityChange(item._id, 1)} 
+                        <button
+                          onClick={() => handleQuantityChange(item._id, 1)}
                           className="quantity-btn"
                         >
                           +
@@ -573,17 +576,17 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
           ) : (
             <div className="menu-items-grid">
               {filteredMenuItems.map(item => (
-                <div 
+                <div
                   className={`menu-item-card ${newlyAvailableItems.has(item._id) ? 'newly-available' : ''}`}
                   key={item._id}
                 >
                   {newlyAvailableItems.has(item._id) && (
                     <div className="newly-available-badge">🆕 Just Available!</div>
                   )}
-                  <img 
-                    className="menu-item-image" 
-                    src={item.imageUrl || '/orderflow/placeholder.jpg'} 
-                    alt={item.name} 
+                  <img
+                    className="menu-item-image"
+                    src={item.imageUrl || '/orderflow/placeholder.jpg'}
+                    alt={item.name}
                   />
                   <div className="menu-item-content">
                     <h3 className="menu-item-title">{item.name}</h3>
@@ -591,17 +594,18 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
                     <div className="menu-item-price">{formatCurrency(item.price)}</div>
                     <div className="menu-item-actions">
                       <div className="quantity-control">
-                        <button 
-                          onClick={() => handleQuantityChange(item._id, -1)} 
+                        <button
+                          onClick={() => handleQuantityChange(item._id, -1)}
                           className="quantity-btn"
-                          disabled={!quantities[item._id]}
+                          disabled={quantities[item._id] === 0}
                         >
                           -
                         </button>
                         <span className="quantity-display">{quantities[item._id] || 0}</span>
-                        <button 
-                          onClick={() => handleQuantityChange(item._id, 1)} 
+                        <button
+                          onClick={() => handleQuantityChange(item._id, 1)}
                           className="quantity-btn"
+                          disabled={quantities[item._id] === 1}
                         >
                           +
                         </button>
@@ -623,7 +627,7 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
               <h3>Your Order</h3>
               <button onClick={() => setShowCart(false)} className="close-btn">&times;</button>
             </div>
-            
+
             <div className="cart-content">
               <div className="cart-summary">
                 <div className="summary-row">
@@ -655,7 +659,7 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
                   <div key={item._id} className="cart-item">
                     <span>{item.name} (x{item.quantity * localGuestCount})</span>
                     <div className="cart-item-actions">
-                      <span>{formatCurrency(item.price * item.quantity *localGuestCount)}</span>
+                      <span>{formatCurrency(item.price * item.quantity * localGuestCount)}</span>
                       <button onClick={() => handleRemoveItem(item._id)} className="remove-btn">
                         &times;
                       </button>
@@ -670,9 +674,9 @@ export default function UnifiedMenuPage({ guestCount, setGuestCount, onItemsSele
 
               <div className="cart-actions">
                 <button onClick={handleClearCart} className="clear-btn">Clear All</button>
-                <button 
-                  onClick={handleProceedToSummary} 
-                  className="confirm-btn" 
+                <button
+                  onClick={handleProceedToSummary}
+                  className="confirm-btn"
                   disabled={getTotalItems() === 0}
                 >
                   Proceed to Summary
